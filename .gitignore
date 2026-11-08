@@ -1,0 +1,26 @@
+# Installed dependencies and generated output
+node_modules/
+coverage/
+dist/
+build/
+
+# Local environment settings; keep the shareable example
+.env
+.env.*
+!.env.example
+
+# Local SQLite databases and their companion files
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Documents
+*.md
+*.pdf
+
+# Local system files and debug logs
+.DS_Store
+npm-debug.log*
