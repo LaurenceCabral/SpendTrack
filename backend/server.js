@@ -23,6 +23,11 @@ app.use((error, req, res, next) => {
     return;
   }
 
+  if (error.status >= 400 && error.status < 500) {
+    res.status(400).json({ error: 'Invalid request body' });
+    return;
+  }
+
   res.status(500).json({ error: 'Internal server error' });
 });
 
