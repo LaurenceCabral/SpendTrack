@@ -1,5 +1,6 @@
 // Import component's styles
 import './App.css';
+import { useState } from 'react';
 
 // Defining sample expense data
 // Making sure to follow the fields and types in the API contract
@@ -41,6 +42,8 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 });
 
 function App() {
+  const [currentView, setCurrentView] = useState('dashboard');
+
   // Determining the current year and month
   const today = new Date();
   const currentMonth = `${today.getFullYear()}-${String(
@@ -74,54 +77,85 @@ function App() {
     <div className="app">
       <header className="site-header">
         <span className="brand">SpendTrack</span>
+
+        <nav className="site-nav" aria-label="Main navigation">
+          <button
+            type="button"
+            className="nav-button"
+            aria-pressed={currentView === 'dashboard'}
+            onClick={() => setCurrentView('dashboard')}
+          >
+            Dashboard
+          </button>
+
+          <button
+            type="button"
+            className="nav-button"
+            aria-pressed={currentView === 'history'}
+            onClick={() => setCurrentView('history')}
+          >
+            History
+          </button>
+        </nav>
       </header>
 
       <main className="dashboard">
-        <h1>Dashboard</h1>
-        <p className="month-label">{monthLabel}</p>
+        {currentView === 'dashboard' ? (
+          <>
+            <h1>Dashboard</h1>
+            <p className="month-label">{monthLabel}</p>
 
-        <div className="summary-grid">
-          <section className="summary-card">
-            <h2>Monthly Spending</h2>
-            <p className="summary-value">
-              {currencyFormatter.format(monthlyTotal)}
+            <div className="summary-grid">
+              <section className="summary-card">
+                <h2>Monthly Spending</h2>
+                <p className="summary-value">
+                  {currencyFormatter.format(monthlyTotal)}
+                </p>
+              </section>
+
+              <section className="summary-card">
+                <h2>Total Expenses</h2>
+                <p className="summary-value">{sampleExpenses.length}</p>
+              </section>
+            </div>
+
+            <section className="recent-expenses">
+              <h2>Recent Expenses</h2>
+
+              {recentExpenses.length === 0 ? (
+                <p>No expenses recorded yet.</p>
+              ) : (
+                <ul className="expense-list">
+                  {recentExpenses.map(
+                    ({ id, description, category, date, amount }) => (
+                      <li className="expense-item" key={id}>
+                        <div>
+                          <p className="expense-description">{description}</p>
+                          <p className="expense-details">
+                            {category}
+                            {' · '}
+                            <time dateTime={date}>{date}</time>
+                          </p>
+                        </div>
+
+                        <span className="expense-amount">
+                          {currencyFormatter.format(amount)}
+                        </span>
+                      </li>
+                    ),
+                  )}
+                </ul>
+              )}
+            </section>
+          </>
+        ) : (
+          <section className="history">
+            <h1>Expense History</h1>
+            <p className="history-message">
+              Expense history and filters are coming in a future update.
             </p>
           </section>
-
-          <section className="summary-card">
-            <h2>Total Expenses</h2>
-            <p className="summary-value">{sampleExpenses.length}</p>
-          </section>
-        </div>
-
-        <section className="recent-expenses">
-          <h2>Recent Expenses</h2>
-
-          {recentExpenses.length === 0 ? (
-            <p>No expenses recorded yet.</p>
-          ) : (
-            <ul className="expense-list">
-              {recentExpenses.map(
-                ({ id, description, category, date, amount }) => (
-                  <li className="expense-item" key={id}>
-                    <div>
-                      <p className="expense-description">{description}</p>
-                      <p className="expense-details">
-                        {category}
-                        {' · '}
-                        <time dateTime={date}>{date}</time>
-                      </p>
-                    </div>
-
-                    <span className="expense-amount">
-                      {currencyFormatter.format(amount)}
-                    </span>
-                  </li>
-                ),
-              )}
-            </ul>
-          )}
-        </section>
+        )}
       </main>
     </div>
   );
